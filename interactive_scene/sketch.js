@@ -4,6 +4,9 @@
 
 
 let screenIsVisible = true;
+let cannonLoading = 0;
+let cannonIsLoaded = false;
+let cannonBaseRadious = 50;
 let highlighted = false;
 let pressed = false;
 let x = 128;
@@ -27,7 +30,8 @@ function startScreen(){
 }
 function gameScreen(){
   background(150,60,80);
-  circle(50,50,50)
+  fill(cannonLoading);
+  circle(cannonBaseRadious,windowHeight-cannonBaseRadious,cannonBaseRadious*2)
 }
 function button(){
   buttonIsHighlighted();
@@ -69,4 +73,7 @@ function buttonIsHighlighted() {
   else {
     highlighted = false
   }
+}
+function mouseWheel(){
+  cannonLoading += 5;
 }
