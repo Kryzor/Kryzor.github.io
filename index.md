@@ -1,7 +1,7 @@
-# comp sci 30
+# Computer Science 30
 
-## demos
+## Demos
 - [Square moving around screen](square_moving)
 
-## projects
+## Projects
 - [Interactuve scene](interactive_scene)
