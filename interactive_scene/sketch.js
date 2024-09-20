@@ -11,8 +11,7 @@ let y = 128;
 let buttonWidth = 500;
 let buttonHeight = 50;
 
-function setup() {
-}
+function setup() {}
 function draw() {
   createCanvas(windowWidth,windowHeight);
   if (screenIsVisible){
@@ -28,6 +27,7 @@ function startScreen(){
 }
 function gameScreen(){
   background(150,60,80);
+  circle(50,50,50)
 }
 function button(){
   buttonIsHighlighted();
