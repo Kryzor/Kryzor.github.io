@@ -1,2 +1,2 @@
 # Kryzor.github.io
-uhm idk
+A  repo for my computer science 30 class.
