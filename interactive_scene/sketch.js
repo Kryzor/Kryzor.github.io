@@ -80,7 +80,7 @@ function mouseWheel(){
 }
 function cannon(){
   if (cannonLoading >=  20){
-    fill(255,255,0);
+    fill(70,70,0);
     cannonIsLoaded = true;
   }
   else {
@@ -88,4 +88,10 @@ function cannon(){
     cannonIsLoaded = false;
   }
   circle(cannonBaseRadious,windowHeight-cannonBaseRadious,cannonBaseRadious*2);
+  angleMode(DEGREES);
+  rotate(-45);
+  rect(windowHeight-500,50,75,50);
+}
+function cannonBall(){
+  circle();
 }
