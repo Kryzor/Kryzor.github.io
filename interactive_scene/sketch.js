@@ -30,8 +30,9 @@ function startScreen(){
 }
 function gameScreen(){
   background(150,60,80);
-  fill(cannonLoading);
-  circle(cannonBaseRadious,windowHeight-cannonBaseRadious,cannonBaseRadious*2)
+  
+  text(cannonLoading, x, y+buttonHeight/3, buttonWidth, buttonHeight);
+  cannon();
 }
 function button(){
   buttonIsHighlighted();
@@ -75,5 +76,16 @@ function buttonIsHighlighted() {
   }
 }
 function mouseWheel(){
-  cannonLoading += 5;
+  cannonLoading += 1;
+}
+function cannon(){
+  if (cannonLoading >=  20){
+    fill(255,255,0);
+    cannonIsLoaded = true;
+  }
+  else {
+    fill(20);
+    cannonIsLoaded = false;
+  }
+  circle(cannonBaseRadious,windowHeight-cannonBaseRadious,cannonBaseRadious*2);
 }
