@@ -6,8 +6,12 @@
 // changing according to time. You may want to investigate the millis()
 // function at https://p5js.org/reference/#/p5/millis
 
-let colourState = 0;
-let waitTime = 1000;
+let lightState = "green";
+let lastSwitchedTime = 0;
+const GREEN_LIGHT_DURATION = 3000;
+const YELLOW_LIGHT_DURATION = 1000;
+const RED_LIGHT_DURATION = 3500;
+
 
 function setup() {
   createCanvas(600, 600);
@@ -15,39 +19,41 @@ function setup() {
 
 function draw() {
   background(255);
-  drawOutlineOfLights();
+  drawBaseOfLights();
+  changeLightState();
+  displayCorrectLight();
 }
-
-function drawOutlineOfLights() {
+function changeLightState(){
+  if (lightState === "green" && millis() > lastSwitchedTime + GREEN_LIGHT_DURATION){
+    lightState = "yellow";
+    lastSwitchedTime = millis();
+  }
+  else if (lightState === "yellow" && millis() > lastSwitchedTime + YELLOW_LIGHT_DURATION){
+    lightState = "red";
+    lastSwitchedTime = millis();
+  }
+  else if (lightState === "red" && millis() > lastSwitchedTime + RED_LIGHT_DURATION){
+    lightState = "green";
+    lastSwitchedTime = millis();
+  }
+}
+function displayCorrectLight(){
+  if (lightState === "green"){
+    fill("green");
+    ellipse(width/2, height/2 + 65, 50, 50); //bottom
+  }
+  else if (lightState === "yellow"){
+    fill("yellow");
+    ellipse(width/2, height/2, 50, 50); //middle
+  }
+  else if (lightState === "red"){
+    fill("red");
+    ellipse(width/2, height/2 - 65, 50, 50); //top
+  }
+}
+function drawBaseOfLights() {
   //box
   rectMode(CENTER);
   fill(30);
   rect(width/2, height/2, 75, 200, 10);
-
-  //lights
-  lights();
-  if (colourState === 0){
-    fill('red');
-  }
-  else {
-    fill(0);
-  }
-  ellipse(width/2, height/2 - 65, 50, 50); //top
-  fill('yellow');
-  ellipse(width/2, height/2, 50, 50); //middle
-  fill('green');
-  ellipse(width/2, height/2 + 65, 50, 50); //bottom
-}
-
-function lights(){
-  if (colourState === 0){
-    if (millis() < waitTime){
-      colourState = 1;
-    }
-  }
-  else if (colourState === 1){
-    if  (millis() < waitTime){
-      colourState = 0;
-    }
-  }
 }

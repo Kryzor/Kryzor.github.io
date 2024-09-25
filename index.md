@@ -5,4 +5,4 @@
 - [Image Demo](image_demo)
 - [Traffic Light](traffic_light)
 ## Projects
-- [Interactuve scene](interactive_scene)
+- [Interactive scene](interactive_scene)
