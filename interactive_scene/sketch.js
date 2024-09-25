@@ -7,6 +7,11 @@ let screenIsVisible = true;
 let cannonLoading = 0;
 let cannonIsLoaded = false;
 let cannonBaseRadious = 50;
+let cannonBallAlive = false;
+let cannonBallXPos = 0;
+let cannonBallYPos = 0;
+let lastMouseXPos = 0;
+let lastMouseYPos = 0;
 let highlighted = false;
 let pressed = false;
 let x = 128;
@@ -37,8 +42,8 @@ function gameScreen(){
 function button(){
   buttonIsHighlighted();
   buttonIsPressed();
-  x = (windowWidth/2)-buttonWidth/2;
-  y = (windowHeight/2)-buttonHeight/2;
+  x = windowWidth/2-buttonWidth/2;
+  y = windowHeight/2-buttonHeight/2;
   if (highlighted){
     fill(150);
     strokeWeight(4);
@@ -56,7 +61,7 @@ function button(){
   rect(x, y, buttonWidth, buttonHeight);
   textAlign(CENTER);
   textSize(20);
-  text('Start the uhhhhhhhh game', x, y+buttonHeight/3, buttonWidth, buttonHeight);
+  text("Start the uhhhhhhhh game", x, y+buttonHeight/3, buttonWidth, buttonHeight);
 }
 function buttonIsPressed() {
   if (mouseX > x && mouseX < x + buttonWidth && mouseY > y && mouseY < y + buttonHeight && mouseIsPressed) {
@@ -72,11 +77,22 @@ function buttonIsHighlighted() {
     highlighted = true;
   }
   else {
-    highlighted = false
+    highlighted = false;
   }
 }
 function mouseWheel(){
-  cannonLoading += 1;
+  cannonLoading += 2;
+  if (cannonLoading >= 20){
+    cannonLoading = 20;
+  }
+}
+function mousePressed(){
+  if (cannonLoading === 20){
+    cannonLoading = 0;
+    cannonBallAlive = true;
+    lastMouseXPos = mouseX;
+    lastMouseYPos = mouseY;
+  }
 }
 function cannon(){
   if (cannonLoading >=  20){
@@ -88,10 +104,16 @@ function cannon(){
     cannonIsLoaded = false;
   }
   circle(cannonBaseRadious,windowHeight-cannonBaseRadious,cannonBaseRadious*2);
+  cannonBall();
   angleMode(DEGREES);
   rotate(-45);
-  rect(windowHeight-500,50,75,50);
+  rect(-450,515,75,50);
 }
 function cannonBall(){
-  circle();
+  if (cannonBallAlive === true){
+    while (cannonBallXPos <= lastMouseXPos){
+      cannonBallXPos += 1;
+    }
+    circle(cannonBallXPos,lastMouseYPos,cannonBaseRadious);
+  }
 }
