@@ -1,21 +1,18 @@
 // Interactive Scene
 // Katos Booth
 // September 2024
+// A silly little snake game
 
 
 let screenIsVisible = true;
-let cannonLoading = 0;
-let cannonIsLoaded = false;
-let cannonBaseRadious = 50;
-let cannonBallAlive = false;
-let cannonBallXPos = 0;
-let cannonBallYPos = 0;
-let lastMouseXPos = 0;
-let lastMouseYPos = 0;
+let snakeLength = 1;
+let snakeState = 0;
+let snakeX = 0;
+let snakeY = 0;
 let highlighted = false;
 let pressed = false;
-let x = 128;
-let y = 128;
+let buttonX = 128;
+let buttonY = 128;
 let buttonWidth = 500;
 let buttonHeight = 50;
 
@@ -28,6 +25,7 @@ function draw() {
   }
   else {
     gameScreen();
+    snake();
   } 
 }
 function startScreen(){
@@ -35,15 +33,12 @@ function startScreen(){
 }
 function gameScreen(){
   background(150,60,80);
-  
-  text(cannonLoading, x, y+buttonHeight/3, buttonWidth, buttonHeight);
-  cannon();
 }
 function button(){
   buttonIsHighlighted();
   buttonIsPressed();
-  x = windowWidth/2-buttonWidth/2;
-  y = windowHeight/2-buttonHeight/2;
+  buttonX = windowWidth/2-buttonWidth/2;
+  buttonY = windowHeight/2-buttonHeight/2;
   if (highlighted){
     fill(150);
     strokeWeight(4);
@@ -58,13 +53,13 @@ function button(){
     fill(150);
     stroke(255);
   }
-  rect(x, y, buttonWidth, buttonHeight);
+  rect(buttonX, buttonY, buttonWidth, buttonHeight);
   textAlign(CENTER);
   textSize(20);
-  text("Start the uhhhhhhhh game", x, y+buttonHeight/3, buttonWidth, buttonHeight);
+  text("Start the uhhhhhhhh game", buttonX, buttonY+buttonHeight/3, buttonWidth, buttonHeight);
 }
 function buttonIsPressed() {
-  if (mouseX > x && mouseX < x + buttonWidth && mouseY > y && mouseY < y + buttonHeight && mouseIsPressed) {
+  if (mouseX > buttonX && mouseX < buttonX + buttonWidth && mouseY > buttonY && mouseY < buttonY + buttonHeight && mouseIsPressed) {
     pressed = true;
     screenIsVisible = false;
   }
@@ -73,47 +68,43 @@ function buttonIsPressed() {
   }
 }
 function buttonIsHighlighted() {
-  if (mouseX > x && mouseX < x + buttonWidth && mouseY > y && mouseY < y + buttonHeight && !mouseIsPressed) {
+  if (mouseX > buttonX && mouseX < buttonX + buttonWidth && mouseY > buttonY && mouseY < buttonY + buttonHeight && !mouseIsPressed) {
     highlighted = true;
   }
   else {
     highlighted = false;
   }
 }
-function mouseWheel(){
-  cannonLoading += 2;
-  if (cannonLoading >= 20){
-    cannonLoading = 20;
+function snakeStateChanger(){
+  if (keyIsDown(68)){
+    snakeState = 1;
+  }
+  else if (keyIsDown(87)){
+    snakeState = 2;
+  }
+  else if(keyIsDown(65)){
+    snakeState = 3;
+  }
+  else if (keyIsDown(83)){
+    snakeState = 0;
   }
 }
-function mousePressed(){
-  if (cannonLoading === 20){
-    cannonLoading = 0;
-    cannonBallAlive = true;
-    lastMouseXPos = mouseX;
-    lastMouseYPos = mouseY;
+function snake(){
+  snakeStateChanger();
+  square(snakeX,snakeY,20);
+  if (snakeX >= windowWidth){
+    rese
   }
-}
-function cannon(){
-  if (cannonLoading >=  20){
-    fill(70,70,0);
-    cannonIsLoaded = true;
+  if (snakeState === 0){
+    snakeY += 1;
   }
-  else {
-    fill(20);
-    cannonIsLoaded = false;
+  if (snakeState === 1){
+    snakeX += 1;
   }
-  circle(cannonBaseRadious,windowHeight-cannonBaseRadious,cannonBaseRadious*2);
-  cannonBall();
-  angleMode(DEGREES);
-  rotate(-45);
-  rect(-450,515,75,50);
-}
-function cannonBall(){
-  if (cannonBallAlive === true){
-    while (cannonBallXPos <= lastMouseXPos){
-      cannonBallXPos += 1;
-    }
-    circle(cannonBallXPos,lastMouseYPos,cannonBaseRadious);
+  if (snakeState === 2){
+    snakeY -= 1;
+  }
+  if (snakeState === 3){
+    snakeX -= 1;
   }
 }
