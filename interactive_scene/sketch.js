@@ -9,6 +9,11 @@ let snakeLength = 1;
 let snakeState = 0;
 let snakeX = 0;
 let snakeY = 0;
+let snakeSize = 20;
+let snakeSpeed = 5;
+let snakeFoodPositionX = 50;
+let snakeFoodPositionY = 50;
+let snakeFoodRadius = 20;
 let highlighted = false;
 let pressed = false;
 let buttonX = 128;
@@ -16,23 +21,25 @@ let buttonY = 128;
 let buttonWidth = 500;
 let buttonHeight = 50;
 
-function setup() {}
+function setup() {
+}
 function draw() {
   createCanvas(windowWidth,windowHeight);
   if (screenIsVisible){
     startScreen();
-    button();
   }
   else {
     gameScreen();
-    snake();
+
   } 
 }
 function startScreen(){
   background(56,120,200);
+  button();
 }
 function gameScreen(){
-  background(150,60,80);
+  background(60,150,80);
+  snake();
 }
 function button(){
   buttonIsHighlighted();
@@ -91,20 +98,34 @@ function snakeStateChanger(){
 }
 function snake(){
   snakeStateChanger();
-  square(snakeX,snakeY,20);
-  if (snakeX >= windowWidth){
-    rese
+  square(snakeX,snakeY,snakeSize);
+  if (snakeX >= windowWidth - snakeSize || snakeY >= windowHeight - snakeSize || snakeX <= 0 || snakeY <= 0){
+    restartGame();
   }
   if (snakeState === 0){
-    snakeY += 1;
+    snakeY += snakeSpeed;
   }
-  if (snakeState === 1){
-    snakeX += 1;
+  else if (snakeState === 1){
+    snakeX += snakeSpeed;
   }
-  if (snakeState === 2){
-    snakeY -= 1;
+  else if (snakeState === 2){
+    snakeY -= snakeSpeed;
   }
-  if (snakeState === 3){
-    snakeX -= 1;
+  else  if (snakeState === 3){
+    snakeX -= snakeSpeed;
   }
+  snakeFood();
+}
+function snakeFood(){
+  fill("red");
+  circle(snakeFoodPositionX,snakeFoodPositionY,snakeFoodRadius);
+  if (snakeX > snakeFoodPositionX + snakeSize && snakeX < snakeFoodPositionX + snakeSize && snakeY > snakeFoodPositionY + snakeSize && snakeY > snakeFoodPositionY + snakeSize){
+    snakeFoodPositionX = random(0,windowWidth);
+    snakeFoodPositionY = random(0,windowHeight);
+  }
+}
+function restartGame(){
+  snakeX = windowWidth/2;
+  snakeY = windowHeight/2;
+  screenIsVisible = true;
 }
