@@ -4,5 +4,6 @@
 - [Square moving around screen](square_moving)
 - [Image Demo](image_demo)
 - [Traffic Light](traffic_light)
+- [Bouncing Balls](bouncing_balls)
 ## Projects
 - [Interactive scene](interactive_scene)
