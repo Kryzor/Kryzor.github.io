@@ -7,7 +7,7 @@
 
 let screenState = 0;
 
-let button = {
+const button = {
   w: 500,
   h: 100,
   x: 0,
@@ -17,6 +17,8 @@ let button = {
   bl: 4,
   br: 4,
 };
+
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -36,13 +38,27 @@ function screenController(){
   if (screenState === 0){
     mainScreen();
   }
+  else if (screenState === 1){
+    gameScreen();
+  }
 }
 
 function mainScreen(){
+  setupButton();
+}
+
+function gameScreen() {
+
+}
+
+function setupButton(){
   fill(30,220,80);
-  if (mouseX > button.x && button.w && mouseX < button.w){
-    stroke(255,5,5);
-    strokeWeight(2);
+  if (mouseX > button.x && button.w && mouseX < button.x + button.w && mouseY > button.y && button.h && mouseY < button.y + button.h){
+    stroke(10,170,10);
+    strokeWeight(5);
+    if (mousePressed){
+      screenState = 1;
+    }
   }
   else {
     stroke(0);
@@ -50,8 +66,3 @@ function mainScreen(){
   }
   rect(button.x, button.y, button.w, button.h, button.tl, button.tr);
 }
-
-function gameScreen() {
-
-}
-
