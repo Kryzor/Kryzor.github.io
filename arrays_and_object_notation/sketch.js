@@ -51,7 +51,7 @@ function mainScreen(){
 //the game screen that shows when the main menu button is pressed
 function gameScreen() {
   background(220);
-  createBall(random(windowWidth), random(windowHeight));
+  ballBasicStuff();
 }
 
 //the setup for the start menu button
@@ -75,14 +75,18 @@ function setupButton(){
   text("Start the ball playground", button.x + button.w/2, button.y + button.h/1.6);
 }
 
-//creates the ball
-function createBall(ballX, ballY){
-  noStroke();
-  fill(ball.r,ball.g,ball.b);
-  circle(theBall.x, theBall.y, theBall.radius*2);
+//creates the ball variables and adds balls to an array
+function createBallVariables(ballX, ballY){
   let ball = {
     x: ballX,
     y: ballY,
+    speedX: random(-5, 5),
+    speedY: random(-5, 5),
+    velocityX: 0,
+    velocityY: 0,
+    gravity: 1,
+    bounce: 0,
+    friction: -0.1,
     radius: 10,
     r: random(255),
     g: random(255),
@@ -91,6 +95,40 @@ function createBall(ballX, ballY){
   ballsArray.push(ball);
 }
 
-function ballMovement(){
+//creates the ball and the movement of the ball
+function ballBasicStuff(){
+  for (let ball of ballsArray){
 
+    //sets up the ball
+    fill(ball.r,ball.g,ball.b);
+    circle(ball.x, ball.y, ball.radius*2);
+
+    //adds movement to the ball
+    //the site that i found to add the gravity effect:
+    //https://stackoverflow.com/questions/75070602/adding-links-into-a-p5-js-ball-physics-simulation
+    ball.velocityY += ball.gravity;
+    ball.x += ball.velocityX;
+    ball.y += ball.velocityY;
+    if (ball.x + ball.radius > width){
+      ball.x = width - ball.radius;
+      ball.velocityX *= ball.friction;
+    }
+    else if (ball.x - ball.radius < 0){
+      ball.x = ball.radius;
+      ball.velocityX *= friction;
+    }
+    if (ball.y + ball.radius < height){
+
+    }
+    else if (){
+
+    }
+  }
+}
+
+//spawns the ball at the mouse cordinates when the mouse is clicked
+function mousePressed(){
+  if (screenState === 1){
+    createBallVariables(mouseX, mouseY);
+  }
 }
