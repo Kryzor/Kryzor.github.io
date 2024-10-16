@@ -85,8 +85,11 @@ function createBallVariables(ballX, ballY){
     velocityX: 0,
     velocityY: 0,
     gravity: 1,
-    bounce: 0,
-    friction: -0.1,
+
+    //this is like a percentage, if bounce is 1 then it will lose no velocity
+    bounce: 0.5,
+
+
     radius: 10,
     r: random(255),
     g: random(255),
@@ -104,24 +107,29 @@ function ballBasicStuff(){
     circle(ball.x, ball.y, ball.radius*2);
 
     //adds movement to the ball
-    //the site that i found to add the gravity effect:
+    //the site that i found to help with implementing the physics effect:
     //https://stackoverflow.com/questions/75070602/adding-links-into-a-p5-js-ball-physics-simulation
     ball.velocityY += ball.gravity;
     ball.x += ball.velocityX;
     ball.y += ball.velocityY;
-    if (ball.x + ball.radius > width){
+    let distance = sqrt();
+
+    //the ball collision detection on the window
+    if (ball.x + ball.radius >= width){
       ball.x = width - ball.radius;
-      ball.velocityX *= ball.friction;
+      ball.velocityX *= -ball.bounce;
     }
-    else if (ball.x - ball.radius < 0){
+    if (ball.x - ball.radius <= 0){
       ball.x = ball.radius;
-      ball.velocityX *= friction;
+      ball.velocityX *= -ball.bounce;
     }
-    if (ball.y + ball.radius < height){
-
+    if (ball.y + ball.radius >= height){
+      ball.y = height - ball.radius;
+      ball.velocityY *= -ball.bounce;
     }
-    else if (){
-
+    if (ball.y - ball.radius <= 0){
+      ball.y = ball.radius;
+      ball.velocityY *= -ball.bounce;
     }
   }
 }
