@@ -45,6 +45,11 @@ function screenController(){
 //the main screen that shows up upon starting the project
 function mainScreen(){
   background(100,160,200);
+  textSize(20);
+  fill(240);
+  text("Press R to reset", width/2, 20, width/2);
+  text("Click to spawn a ball", width/2, 40, width/2);
+  text("Press the spacebar to add more balls to your clicks", width/2,65, width/2);
   setupButton();
 }
 
@@ -76,21 +81,21 @@ function setupButton(){
 }
 
 //creates the ball variables and adds balls to an array
-function createBallVariables(ballX, ballY){
+function createBall(ballX, ballY){
   let ball = {
     x: ballX,
     y: ballY,
     speedX: random(-5, 5),
     speedY: random(-5, 5),
-    velocityX: 0,
-    velocityY: 0,
-    gravity: 1,
+    velocityX: random(-10,10),
+    velocityY: random(-10,10),
+    gravity: 1.0,
+    friction: 0.5,
 
     //this is like a percentage, if bounce is 1 then it will lose no velocity
-    bounce: 0.5,
+    bounce: 0.75,
 
-
-    radius: 10,
+    radius: random(10,50),
     r: random(255),
     g: random(255),
     b: random(255),
@@ -112,7 +117,6 @@ function ballBasicStuff(){
     ball.velocityY += ball.gravity;
     ball.x += ball.velocityX;
     ball.y += ball.velocityY;
-    let distance = sqrt();
 
     //the ball collision detection on the window
     if (ball.x + ball.radius >= width){
@@ -134,9 +138,9 @@ function ballBasicStuff(){
   }
 }
 
-//spawns the ball at the mouse cordinates when the mouse is clicked
+
 function mousePressed(){
   if (screenState === 1){
-    createBallVariables(mouseX, mouseY);
+    createBall(mouseX, mouseY);
   }
 }
