@@ -1,11 +1,16 @@
-// Simple little game
+// Simple little ball playground
 // Katos Booth
 // October 9th 2024
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// Adding some form of physics to the balls to bounce around and interact with the window
+// Making the setup useless? i dont think that would count but it was super good to update the window
+// as it was being messed with so the balls can accurately interact with the window properly
+// i dont remember anything about adding variables to a string in class
+// i may be wrong though
 
 let screenState = 0;
+let ballCreationTimes = 1;
 let ballsArray = [];
 
 let button = {
@@ -19,7 +24,7 @@ let button = {
   br: 4,
 };
 
-
+//setup is made useless so the canvas can update and change its size when the window is changed
 function setup() {}
 
 function draw() {
@@ -45,26 +50,42 @@ function screenController(){
 //the main screen that shows up upon starting the project
 function mainScreen(){
   background(100,160,200);
+
+  //the text telling you how to do something
   textSize(20);
   fill(240);
-  text("Press R to reset", width/2, 20, width/2);
-  text("Click to spawn a ball", width/2, 40, width/2);
-  text("Press the spacebar to add more balls to your clicks", width/2,65, width/2);
+  textAlign(LEFT);
+  text("Press R to remove all the balls from the screen", 0, 10, width);
+  text("Click to spawn a ball", 0, 35, width);
+  text("Press the plus key to add more balls to your clicks and minus key to remove balls from your clicks", 0,60, width);
+
   setupButton();
 }
 
 //the game screen that shows when the main menu button is pressed
 function gameScreen() {
   background(220);
+
+  //the text to show the values of stuff
+  textSize(15);
+  fill(0);
+  textAlign(LEFT);
+  text(`${ballsArray.length} balls exist`, 0, 10, width);
+  text(`${ballCreationTimes} balls will be created upon clicking`, 0, 30, width);
   ballBasicStuff();
+  editingStuff();
 }
 
 //the setup for the start menu button
 function setupButton(){
   fill(30,220,80);
+
+  //detects moouse hovering over the button
   if (mouseX > button.x && button.w && mouseX < button.x + button.w && mouseY > button.y && button.h && mouseY < button.y + button.h){
     stroke(10,170,10);
     strokeWeight(5);
+
+    //detects the click to change screen
     if (mouseIsPressed){
       screenState = 1;
     }
@@ -85,15 +106,13 @@ function createBall(ballX, ballY){
   let ball = {
     x: ballX,
     y: ballY,
-    speedX: random(-5, 5),
-    speedY: random(-5, 5),
     velocityX: random(-10,10),
     velocityY: random(-10,10),
     gravity: 1.0,
     friction: 0.5,
 
-    //this is like a percentage, if bounce is 1 then it will lose no velocity
-    bounce: 0.75,
+    //this is a percentage
+    bounce: 90,
 
     radius: random(10,50),
     r: random(255),
@@ -121,26 +140,41 @@ function ballBasicStuff(){
     //the ball collision detection on the window
     if (ball.x + ball.radius >= width){
       ball.x = width - ball.radius;
-      ball.velocityX *= -ball.bounce;
+      ball.velocityX *= -ball.bounce/100;
     }
     if (ball.x - ball.radius <= 0){
       ball.x = ball.radius;
-      ball.velocityX *= -ball.bounce;
+      ball.velocityX *= -ball.bounce/100;
     }
     if (ball.y + ball.radius >= height){
       ball.y = height - ball.radius;
-      ball.velocityY *= -ball.bounce;
+      ball.velocityY *= -ball.bounce/100;
     }
     if (ball.y - ball.radius <= 0){
       ball.y = ball.radius;
-      ball.velocityY *= -ball.bounce;
+      ball.velocityY *= -ball.bounce/100;
     }
   }
 }
 
-
+//creates the balls
 function mousePressed(){
   if (screenState === 1){
-    createBall(mouseX, mouseY);
+    for (let i = 0; i < ballCreationTimes; i++){
+      createBall(mouseX, mouseY);
+    }   
+  }
+}
+
+//this stores the stuff that edits certain stuff
+function editingStuff(){
+  if (keyIsDown(187) === true){
+    ballCreationTimes += 1;
+  }
+  if (keyIsDown(189) === true){
+    ballCreationTimes -= 1;
+  }
+  if (keyIsDown(82) === true){
+    ballsArray = [];
   }
 }
