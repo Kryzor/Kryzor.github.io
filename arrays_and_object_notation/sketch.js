@@ -66,12 +66,27 @@ function mainScreen(){
 function gameScreen() {
   background(220);
 
-  //the text to show the values of stuff
+  //the text to show the values of some of the balls information
   textSize(15);
   fill(0);
   textAlign(LEFT);
-  text(`${ballsArray.length} balls exist`, 0, 10, width);
-  text(`${ballCreationTimes} balls will be created upon clicking`, 0, 30, width);
+  if (ballsArray.length === 1){
+    text(`${ballsArray.length} ball exists`, 0, 10, width);
+  }
+  else {
+    text(`${ballsArray.length} balls exist`, 0, 10, width);
+  }
+  if (ballCreationTimes === 1){
+    text(`${ballCreationTimes} ball will be created upon clicking`, 0, 30, width);
+  }
+  else {
+    text(`${ballCreationTimes} balls will be created upon clicking`, 0, 30, width);
+  }
+  if (ballsArray.length > 0) {
+    text(`${ballsArray[0].bounce}% of the balls velocity will be returned upon bouncing`, 0, 50, width);
+  }
+  textAlign(RIGHT);
+  text(frameRate(), 0, 10, width);
   ballBasicStuff();
   editingStuff();
 }
@@ -112,7 +127,7 @@ function createBall(ballX, ballY){
     friction: 0.5,
 
     //this is a percentage
-    bounce: 90,
+    bounce: 100,
 
     radius: random(10,50),
     r: random(255),
@@ -125,7 +140,6 @@ function createBall(ballX, ballY){
 //creates the ball and the movement of the ball
 function ballBasicStuff(){
   for (let ball of ballsArray){
-
     //sets up the ball
     fill(ball.r,ball.g,ball.b);
     circle(ball.x, ball.y, ball.radius*2);
@@ -176,5 +190,17 @@ function editingStuff(){
   }
   if (keyIsDown(82) === true){
     ballsArray = [];
+  }
+}
+
+//changes the bounce percentage using the mouse wheel
+function mouseWheel(event){
+  for (let ball of ballsArray){
+    if (event.delta > 0 ){
+      ball.bounce -= 1;
+    }
+    else {
+      ball.bounce += 1;
+    }
   }
 }
