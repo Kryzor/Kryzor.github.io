@@ -11,6 +11,7 @@
 - [bubble demo](bubble_demo)
 - [Sound Effects Demo](sound_effects)
 - [Translate Rotate Demo](translate_rotate)
+- [Grid](grid)
 ## Projects
 - [Interactive scene](interactive_scene)
 - [Arrays and Object Notation](arrays_and_object_notaton)
