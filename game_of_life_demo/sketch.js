@@ -2,8 +2,6 @@
 // Katos Booth
 // October 23rd 2024
 
-
-
 let grid;
 let cellSize;
 const GRID_SIZE = 100;

@@ -17,3 +17,4 @@
 ## Projects
 - [Interactive scene](interactive_scene)
 - [Arrays and Object Notation](arrays_and_object_notaton)
+- [Grid Based Game](grid_based_game)
