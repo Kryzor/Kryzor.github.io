@@ -13,6 +13,7 @@
 - [Translate Rotate Demo](translate_rotate_demo)
 - [Grid Demo](grid_demo)
 - [Game of Life Demo](game_of_life_demo)
+- [Rectangle Grid Demo](rectangle_grid)
 ## Projects
 - [Interactive scene](interactive_scene)
 - [Arrays and Object Notation](arrays_and_object_notaton)
