@@ -8,14 +8,13 @@ let cellSize;
 const GRID_SIZE = 25;
 const OPEN_TILE = 0;
 const IMPASSIBLE = 1;
-const PLAYER = 9;
 let thePlayer = {
   x:0,
   y:0,
-  speed: 5,
+  speed: 0,
 };
 
-let PacManSpriteState = 0;
+let PacManMoveState = 0;
 let defaultPacManSprite;
 let rightPacManSprite;
 let downPacManSprite;
@@ -35,10 +34,10 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   noSmooth();
   cellSize = height/GRID_SIZE;
-  thePlayer.x = cellSize/2;
-  thePlayer.y = cellSize/2;
+  thePlayer.x = width/2;
+  thePlayer.y = height/2;
   thePlayer.speed = cellSize*0.1;
-  grid = generateRandomGrid(GRID_SIZE, GRID_SIZE);
+  grid = generateRandomGrid(GRID_SIZE*20, GRID_SIZE*20);
 }
 
 function windowResized(){
@@ -65,25 +64,25 @@ function createPlayer(){
 
 function movePlayer() {
   let playerGridX = Math.floor(thePlayer.x/cellSize);
-  let playerGridY = Math.floor(thePlayer.x/cellSize);
+  let playerGridY = Math.floor(thePlayer.y/cellSize);
   if (key === 'd'){
-    PacManSpriteState = 1;
+    PacManMoveState = 1;
     thePlayer.x += thePlayer.speed;
   }
   if (key === 'a'){
-    PacManSpriteState = 2;
+    PacManMoveState = 2;
     thePlayer.x -= thePlayer.speed;
   }
   if (key === 's'){
-    PacManSpriteState = 3;
+    PacManMoveState = 3;
     thePlayer.y += thePlayer.speed;
   }
   if (key === 'w'){
-    PacManSpriteState = 4;
+    PacManMoveState = 4;
     thePlayer.y -= thePlayer.speed;
   }
 
-  //collision
+  //with window collision
   if (thePlayer.x + cellSize/2 > width){
     thePlayer.x = width - cellSize/2;
   }
@@ -96,38 +95,32 @@ function movePlayer() {
   if (thePlayer.y + cellSize/2 > height){
     thePlayer.y = height - cellSize/2;
   }
+
+  //grid collision
+  playerGridCollision(playerGridX, playerGridY);
+}
+
+function playerGridCollision(x,y){
+  if (grid[y][x] === IMPASSIBLE) {
+    thePlayer.x -= cellSize/2;
+  }
 }
 
 function displayPlayer(){
-  if (PacManSpriteState === 0){
+  if (PacManMoveState === 0){
     image(defaultPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
   }
-  if (PacManSpriteState === 1){
+  if (PacManMoveState === 1){
     image(rightPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
   }
-  if (PacManSpriteState === 2){
+  if (PacManMoveState === 2){
     image(leftPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
   }
-  if (PacManSpriteState === 3){
+  if (PacManMoveState === 3){
     image(downPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
   }
-  if (PacManSpriteState === 4){
+  if (PacManMoveState === 4){
     image(upPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
-  }
-}
-
-function displayGrid() {
-  for (let y = 0; y < GRID_SIZE; y++) {
-    for (let x = 0; x < GRID_SIZE; x++) {
-      if (grid[y][x] === IMPASSIBLE) {
-        fill(0);
-        square(x * cellSize, y * cellSize, cellSize);
-      }
-      else if (grid[y][x] === OPEN_TILE) {
-        fill(0, 0, 255);
-        square(x * cellSize, y * cellSize, cellSize);
-      }
-    }
   }
 }
 
@@ -137,12 +130,27 @@ function generateRandomGrid(cols, rows) {
     newGrid.push([]);
     for (let x = 0; x < cols; x++) {
       if (random(100) < 50) {
-        newGrid[y].push(IMPASSIBLE);
+        newGrid[y].push(OPEN_TILE);
       }
       else {
-        newGrid[y].push(OPEN_TILE);
+        newGrid[y].push(IMPASSIBLE);
       }
     }
   }
   return newGrid;
+}
+
+function displayGrid() {
+  for (let y = 0; y < GRID_SIZE*2; y++) {
+    for (let x = 0; x < GRID_SIZE*2; x++) {
+      if (grid[y][x] === OPEN_TILE) {
+        fill(0);
+        square(x * cellSize, y * cellSize, cellSize);
+      }
+      else if (grid[y][x] === IMPASSIBLE) {
+        fill(0, 0, 255);
+        square(x * cellSize, y * cellSize, cellSize);
+      }
+    }
+  }
 }
