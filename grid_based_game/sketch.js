@@ -3,9 +3,9 @@
 // Katos Booth
 // October 28th 2024
 
-let grid;
+let mazeGrid;
 let cellSize;
-const GRID_SIZE = 10;
+const GRID_SIZE = 50;
 const OPEN_TILE = 0;
 const IMPASSIBLE = 1;
 let thePlayer = {
@@ -40,13 +40,15 @@ function setup() {
   noSmooth();
   cellSize = height/GRID_SIZE;
   thePlayer.speed = cellSize*0.1;
-  grid = generateRandomGrid(GRID_SIZE*20, GRID_SIZE*20);
-
+  mazeGrid = generateRandomGrid(50,50);
+  
   //creates the spawn position for pac man
   thePlayer.spawnPositionX = Math.floor(width/2);
   thePlayer.spawnPositionY = Math.floor(height/2);
   thePlayer.x = thePlayer.spawnPositionX;
   thePlayer.y = thePlayer.spawnPositionY;
+  noStroke();
+  background(0);
 }
 
 function windowResized(){
@@ -68,9 +70,6 @@ function screenController(){
 }
 
 function displayGameScreen(){
-  pixelDensity(1);
-  background(0);
-  noStroke();
   displayGrid();
   createPlayer();
 }
@@ -85,8 +84,8 @@ function createPlayer(){
 }
 
 function movePlayer() {
-  let playerGridX = Math.floor(thePlayer.x/cellSize);
-  let playerGridY = Math.floor(thePlayer.y/cellSize);
+  let playerGridX = Math.round(thePlayer.x/cellSize);
+  let playerGridY = Math.round(thePlayer.y/cellSize);
   if (PacManMoveState === 1){
     thePlayer.y -= thePlayer.speed;
   }
@@ -119,13 +118,7 @@ function movePlayer() {
 }
 
 function playerGridCollision(x,y){
-  if (grid[y][x] === IMPASSIBLE) {
-    thePlayer.y += cellSize/2;
-    PacManMoveState = 0;
-  }
-  else {
-    inputsForGame();
-  }
+  inputsForGame();
 }
 
 function inputsForGame(){
@@ -162,36 +155,44 @@ function displayPlayer(){
   }
 }
 
+//Generates the maze
 function generateRandomGrid(cols, rows) {
-  let newGrid = [];
-  for (let y = 0; y < rows; y++) {
-    newGrid.push([]);
-    for (let x = 0; x < cols; x++) {
-      if (random(100) < 50) {
-        newGrid[y].push(OPEN_TILE);
+  const grid = Array.from({length:rows}, () => Array(cols).fill(IMPASSIBLE));
+
+  function carvePath(x,y){
+    const directions = [
+      {dx: 0, dy: -1},//up
+      {dx: 0, dy: 1},//down
+      {dx: 1, dy: 0},//right
+      {dx: -1, dy: 0},//left
+    ];
+    directions.sort(() => Math.random() - 0.5);
+
+    directions.forEach(({dx,dy}) => {
+      const nx = x + dx * 2;
+      const ny = y + dy * 2;
+      if (nx >= 0 && nx < cols && ny >= 0 && ny < rows && grid[ny][nx] === IMPASSIBLE){
+        grid[y + dy][x + dx] = OPEN_TILE;
+        grid[ny][nx] = OPEN_TILE;
+        carvePath(nx, ny);
       }
-      else {
-        newGrid[y].push(IMPASSIBLE);
-      }
-      if (newGrid[y+1] === IMPASSIBLE){
-        newGrid[y+1].push(OPEN_TILE);
-      }
-      if (newGrid[y-1] === IMPASSIBLE){
-        newGrid[y-1].push(OPEN_TILE);
-      }
-    }
+    });
   }
-  return newGrid;
+
+  grid[1][1] = OPEN_TILE;
+  carvePath(1,1);
+
+  return grid;
 }
 
 function displayGrid() {
-  for (let y = 0; y < GRID_SIZE*2; y++) {
-    for (let x = 0; x < GRID_SIZE*2; x++) {
-      if (grid[y][x] === OPEN_TILE) {
+  for (let y = 0; y < GRID_SIZE; y++) {
+    for (let x = 0; x < GRID_SIZE; x++) {
+      if (mazeGrid[y][x] === OPEN_TILE) {
         fill(0);
         square(x * cellSize, y * cellSize, cellSize);
       }
-      else if (grid[y][x] === IMPASSIBLE) {
+      else if (mazeGrid[y][x] === IMPASSIBLE) {
         fill(0, 0, 255);
         square(x * cellSize, y * cellSize, cellSize);
       }
