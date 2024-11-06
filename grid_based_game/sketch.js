@@ -5,7 +5,7 @@
 
 let mazeGrid;
 let cellSize;
-const GRID_SIZE = 50;
+const GRID_SIZE = 25;
 const OPEN_TILE = 0;
 const IMPASSIBLE = 1;
 let thePlayer = {
@@ -40,17 +40,18 @@ function setup() {
   noSmooth();
   cellSize = height/GRID_SIZE;
   thePlayer.speed = cellSize*0.1;
-  mazeGrid = generateRandomGrid(50,50);
+  mazeGrid = generateRandomGrid(GRID_SIZE,GRID_SIZE);
   
   //creates the spawn position for pac man
-  thePlayer.spawnPositionX = Math.floor(width/2);
-  thePlayer.spawnPositionY = Math.floor(height/2);
+  thePlayer.spawnPositionX = cellSize*1.5;
+  thePlayer.spawnPositionY = cellSize*1.5;
   thePlayer.x = thePlayer.spawnPositionX;
   thePlayer.y = thePlayer.spawnPositionY;
   noStroke();
   background(0);
 }
 
+//Detect when the window is resized
 function windowResized(){
   createCanvas(windowWidth, windowHeight);
   noSmooth();
@@ -60,6 +61,7 @@ function draw() {
   screenController();
 }
 
+//Controls which screen is allowed tobe visible
 function screenController(){
   if (screenState === 1){
     displayGameScreen();
@@ -69,11 +71,13 @@ function screenController(){
   }
 }
 
+//Displays the game screen
 function displayGameScreen(){
   displayGrid();
   createPlayer();
 }
 
+//Displays the main screen
 function displayMainScreen(){
   background(0);
 }
@@ -84,22 +88,38 @@ function createPlayer(){
 }
 
 function movePlayer() {
-  let playerGridX = Math.round(thePlayer.x/cellSize);
-  let playerGridY = Math.round(thePlayer.y/cellSize);
+
+  //Calculate the player's grid coordinates
+
+  //center point
+  let playerGridX = Math.floor(thePlayer.x/cellSize);
+  let playerGridY = Math.floor(thePlayer.y/cellSize);
+
+  //up point
+  let playerUpGridY = Math.floor(thePlayer.y-0.5/cellSize);
+  
+  //down point
+  let playerDownGridY = Math.floor(thePlayer.y+0.5/cellSize);
+  
+  //Saves the current position in case we need to revert due to collision
+  let previousPlayerX = thePlayer.x;
+  let previousPlayerY = thePlayer.y;
+  
+  //Detect states to move the player
   if (PacManMoveState === 1){
     thePlayer.y -= thePlayer.speed;
   }
-  if (PacManMoveState === 2){
+  else if (PacManMoveState === 2){
     thePlayer.x -= thePlayer.speed;
   }
-  if (PacManMoveState === 3){
+  else if (PacManMoveState === 3){
     thePlayer.y += thePlayer.speed;
   }
-  if (PacManMoveState === 4){
+  else if (PacManMoveState === 4){
     thePlayer.x += thePlayer.speed;
   }
   
-  //with window collision
+  //Check for collision with the window
   if (thePlayer.x + cellSize/2 > width){
     thePlayer.x = width - cellSize/2;
   }
@@ -113,14 +133,24 @@ function movePlayer() {
     thePlayer.y = height - cellSize/2;
   }
   
-  //grid collision
-  playerGridCollision(playerGridX, playerGridY);
-}
 
-function playerGridCollision(x,y){
+  playerGridCollision(playerGridX, playerGridY, playerUpGridY, playerDownGridY, previousPlayerX, previousPlayerY);
   inputsForGame();
 }
 
+//Detects the grid collision
+function playerGridCollision(gridX, gridY, upGridY, downGridY, prevX, prevY){
+  if (mazeGrid[gridY][gridX] === IMPASSIBLE){
+    thePlayer.x = prevX;
+    thePlayer.y = prevY;
+  }
+  if (mazeGrid[upGridY][gridX] === IMPASSIBLE){
+    thePlayer.x = prevX;
+    thePlayer.y = prevY;
+  }
+}
+
+//Get the inputs for the game
 function inputsForGame(){
   if (keyIsDown(38) === true){
     PacManMoveState = 1;
@@ -134,9 +164,9 @@ function inputsForGame(){
   if (keyIsDown(39) === true){
     PacManMoveState = 4;
   }
-
 }
 
+//Display the player
 function displayPlayer(){
   if (PacManMoveState === 0){
     image(defaultPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
@@ -155,7 +185,7 @@ function displayPlayer(){
   }
 }
 
-//Generates the maze
+//Generates the grid
 function generateRandomGrid(cols, rows) {
   const grid = Array.from({length:rows}, () => Array(cols).fill(IMPASSIBLE));
 
@@ -185,9 +215,13 @@ function generateRandomGrid(cols, rows) {
   return grid;
 }
 
+//Displays the grid
 function displayGrid() {
+  //Checks each tile
   for (let y = 0; y < GRID_SIZE; y++) {
     for (let x = 0; x < GRID_SIZE; x++) {
+
+      //Checks the tile and gives it colour appropiate to its state
       if (mazeGrid[y][x] === OPEN_TILE) {
         fill(0);
         square(x * cellSize, y * cellSize, cellSize);
