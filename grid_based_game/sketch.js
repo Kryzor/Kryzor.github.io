@@ -88,22 +88,17 @@ function createPlayer(){
 }
 
 function movePlayer() {
-
-  //Calculate the player's grid coordinates
-
   //center point
   let playerGridX = Math.floor(thePlayer.x/cellSize);
   let playerGridY = Math.floor(thePlayer.y/cellSize);
 
-  //up point
-  let playerUpGridY = Math.floor(thePlayer.y-0.5/cellSize);
-  
-  //down point
-  let playerDownGridY = Math.floor(thePlayer.y+0.5/cellSize);
-  
-  //Saves the current position in case we need to revert due to collision
-  let previousPlayerX = thePlayer.x;
-  let previousPlayerY = thePlayer.y;
+  let playerUpperGridY = Math.floor(thePlayer.y/cellSize-0.45);
+
+  let playerLowerGridY = Math.floor(thePlayer.y/cellSize+0.45);
+
+  let playerLeftGridX = Math.floor(thePlayer.x/cellSize-0.45);
+
+  let playerRightGridY = Math.floor(thePlayer.x/cellSize+0.45);
   
   //Detect states to move the player
   if (PacManMoveState === 1){
@@ -133,21 +128,25 @@ function movePlayer() {
     thePlayer.y = height - cellSize/2;
   }
   
-
-  playerGridCollision(playerGridX, playerGridY, playerUpGridY, playerDownGridY, previousPlayerX, previousPlayerY);
-  inputsForGame();
+  
+  playerGridCollision(playerGridX, playerGridY, playerUpperGridY, playerLowerGridY,  playerLeftGridX, playerRightGridY);
 }
 
 //Detects the grid collision
-function playerGridCollision(gridX, gridY, upGridY, downGridY, prevX, prevY){
-  if (mazeGrid[gridY][gridX] === IMPASSIBLE){
-    thePlayer.x = prevX;
-    thePlayer.y = prevY;
+function playerGridCollision(gridX, gridY, upperGridY, lowerGridY, leftGridX, rightGridX){
+  if (mazeGrid[upperGridY][gridX] === IMPASSIBLE){
+    thePlayer.y = thePlayer.y+cellSize/10;
   }
-  if (mazeGrid[upGridY][gridX] === IMPASSIBLE){
-    thePlayer.x = prevX;
-    thePlayer.y = prevY;
+  if (mazeGrid[lowerGridY][gridX] === IMPASSIBLE){
+    thePlayer.y = thePlayer.y-cellSize/10;
   }
+  if (mazeGrid[gridY][leftGridX] === IMPASSIBLE){
+    thePlayer.x = thePlayer.x+cellSize/10;
+  }
+  if (mazeGrid[gridY][rightGridX] === IMPASSIBLE){
+    thePlayer.x = thePlayer.x-cellSize/10;
+  }
+  inputsForGame();
 }
 
 //Get the inputs for the game
