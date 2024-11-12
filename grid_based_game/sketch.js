@@ -5,9 +5,19 @@
 
 let mazeGrid;
 let cellSize;
-const GRID_SIZE = 25;
+
+//visual grid size for the amount of blocks  will be seen on screen vertically
+const GRID_SIZE = 50;
+
+let gridSizeWidth;
+let gridSizeHeight;
+
+
+//grid states
 const OPEN_TILE = 0;
 const IMPASSIBLE = 1;
+
+//player variables
 let thePlayer = {
   x:0,
   y:0,
@@ -16,6 +26,7 @@ let thePlayer = {
   spawnPositionY: 0,
 };
 
+//the state for the players movement
 let PacManMoveState = 0;
 
 let defaultPacManSprite;
@@ -24,8 +35,10 @@ let downPacManSprite;
 let leftPacManSprite;
 let upPacManSprite;
 
+//the state for the screen
 let screenState = 1;
 
+//loads the sprites
 function preload(){
   defaultPacManSprite = loadImage("images/pacman/pacman-default.png"); 
   rightPacManSprite = loadImage("images/pacman/pacman-right0.png"); 
@@ -35,23 +48,32 @@ function preload(){
 }
 
 function setup() {
-  imageMode(CENTER);
+  //creates the screen
   createCanvas(windowWidth, windowHeight);
-  noSmooth();
+  mazeGrid = generateRandomGrid(gridSizeWidth,gridSizeHeight);
+  //makes cellSize scale to the height of the screen and fit GRID_SIZE with the screen
   cellSize = height/GRID_SIZE;
+  gridSizeWidth = width/cellSize;
+  gridSizeHeight = height/cellSize;
+  imageMode(CENTER);
+  noSmooth();
+  noStroke();
+  background(0);
+  
+  
+  //makes the speed go the same speed for the size of the grid, if it was a static number
+  //it would go super fast on a smaller grid
   thePlayer.speed = cellSize*0.1;
-  mazeGrid = generateRandomGrid(GRID_SIZE,GRID_SIZE);
   
   //creates the spawn position for pac man
   thePlayer.spawnPositionX = cellSize*1.5;
   thePlayer.spawnPositionY = cellSize*1.5;
   thePlayer.x = thePlayer.spawnPositionX;
   thePlayer.y = thePlayer.spawnPositionY;
-  noStroke();
-  background(0);
+  
 }
 
-//Detect when the window is resized
+//Detect when the window is resized to update certain stuff so it wont look bugged
 function windowResized(){
   createCanvas(windowWidth, windowHeight);
   noSmooth();
@@ -92,25 +114,23 @@ function movePlayer() {
   let playerGridX = Math.floor(thePlayer.x/cellSize);
   let playerGridY = Math.floor(thePlayer.y/cellSize);
 
-  let playerUpperGridY = Math.floor(thePlayer.y/cellSize-0.45);
-
-  let playerLowerGridY = Math.floor(thePlayer.y/cellSize+0.45);
-
-  let playerLeftGridX = Math.floor(thePlayer.x/cellSize-0.45);
-
-  let playerRightGridY = Math.floor(thePlayer.x/cellSize+0.45);
+  //directional points
+  let playerUpperGridY = Math.floor(thePlayer.y/cellSize-0.45); //up
+  let playerLowerGridY = Math.floor(thePlayer.y/cellSize+0.45); //down
+  let playerLeftGridX = Math.floor(thePlayer.x/cellSize-0.45); //left
+  let playerRightGridY = Math.floor(thePlayer.x/cellSize+0.45); //right
   
-  //Detect states to move the player
-  if (PacManMoveState === 1){
+  //Checks states to move the player depending on that state
+  if (PacManMoveState === 1){ //up
     thePlayer.y -= thePlayer.speed;
   }
-  else if (PacManMoveState === 2){
+  else if (PacManMoveState === 2){ //left
     thePlayer.x -= thePlayer.speed;
   }
-  else if (PacManMoveState === 3){
+  else if (PacManMoveState === 3){ //down
     thePlayer.y += thePlayer.speed;
   }
-  else if (PacManMoveState === 4){
+  else if (PacManMoveState === 4){ //right
     thePlayer.x += thePlayer.speed;
   }
   
@@ -130,37 +150,37 @@ function movePlayer() {
   
   
   playerGridCollision(playerGridX, playerGridY, playerUpperGridY, playerLowerGridY,  playerLeftGridX, playerRightGridY);
+  inputsForGame();
 }
 
 //Detects the grid collision
 function playerGridCollision(gridX, gridY, upperGridY, lowerGridY, leftGridX, rightGridX){
-  if (mazeGrid[upperGridY][gridX] === IMPASSIBLE){
+  if (mazeGrid[upperGridY][gridX] === IMPASSIBLE){ //up
     thePlayer.y = thePlayer.y+cellSize/10;
   }
-  if (mazeGrid[lowerGridY][gridX] === IMPASSIBLE){
+  if (mazeGrid[lowerGridY][gridX] === IMPASSIBLE){ //down
     thePlayer.y = thePlayer.y-cellSize/10;
   }
-  if (mazeGrid[gridY][leftGridX] === IMPASSIBLE){
+  if (mazeGrid[gridY][leftGridX] === IMPASSIBLE){ //left
     thePlayer.x = thePlayer.x+cellSize/10;
   }
-  if (mazeGrid[gridY][rightGridX] === IMPASSIBLE){
+  if (mazeGrid[gridY][rightGridX] === IMPASSIBLE){ //right
     thePlayer.x = thePlayer.x-cellSize/10;
   }
-  inputsForGame();
 }
 
 //Get the inputs for the game
 function inputsForGame(){
-  if (keyIsDown(38) === true){
+  if (keyIsDown(38) === true){ //up
     PacManMoveState = 1;
   }
-  if (keyIsDown(37) === true){
+  if (keyIsDown(37) === true){ //left
     PacManMoveState = 2;
   }
-  if (keyIsDown(40) === true){
+  if (keyIsDown(40) === true){ //down
     PacManMoveState = 3;
   }
-  if (keyIsDown(39) === true){
+  if (keyIsDown(39) === true){ //left
     PacManMoveState = 4;
   }
 }
