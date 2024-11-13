@@ -6,12 +6,10 @@
 let mazeGrid;
 let cellSize;
 
+const MAZE_SIZE = 50;
+
 //visual grid size for the amount of blocks  will be seen on screen vertically
-const GRID_SIZE = 50;
-
-let gridSizeWidth;
-let gridSizeHeight;
-
+const GRID_SIZE = 30;
 
 //grid states
 const OPEN_TILE = 0;
@@ -29,8 +27,15 @@ let thePlayer = {
 //the state for the players movement
 let PacManMoveState = 0;
 
+let lastSpriteTime;
+const SPRITE_ANIMATION_DURATION = 200;
 let defaultPacManSprite;
 let rightPacManSprite;
+let rightPacManSprite1;
+let rightPacManSprite2;
+let rightPacManSprite3;
+let rightPacManSprite4;
+let rightPacManSprite5;
 let downPacManSprite;
 let leftPacManSprite;
 let upPacManSprite;
@@ -42,19 +47,25 @@ let screenState = 1;
 function preload(){
   defaultPacManSprite = loadImage("images/pacman/pacman-default.png"); 
   rightPacManSprite = loadImage("images/pacman/pacman-right0.png"); 
+  rightPacManSprite1 = loadImage("images/pacman/pacman-right1.png"); 
+  rightPacManSprite2 = loadImage("images/pacman/pacman-right2.png"); 
+  rightPacManSprite3 = loadImage("images/pacman/pacman-right3.png"); 
+  rightPacManSprite4 = loadImage("images/pacman/pacman-right4.png"); 
+  rightPacManSprite5 = loadImage("images/pacman/pacman-right5.png"); 
   downPacManSprite = loadImage("images/pacman/pacman-down0.png"); 
   leftPacManSprite = loadImage("images/pacman/pacman-left0.png"); 
   upPacManSprite = loadImage("images/pacman/pacman-up0.png"); 
 }
 
 function setup() {
+  frameRate(60);
   //creates the screen
   createCanvas(windowWidth, windowHeight);
-  mazeGrid = generateRandomGrid(gridSizeWidth,gridSizeHeight);
+
   //makes cellSize scale to the height of the screen and fit GRID_SIZE with the screen
   cellSize = height/GRID_SIZE;
-  gridSizeWidth = width/cellSize;
-  gridSizeHeight = height/cellSize;
+
+  mazeGrid = generateRandomGrid(MAZE_SIZE, MAZE_SIZE);
   imageMode(CENTER);
   noSmooth();
   noStroke();
@@ -66,8 +77,8 @@ function setup() {
   thePlayer.speed = cellSize*0.1;
   
   //creates the spawn position for pac man
-  thePlayer.spawnPositionX = cellSize*1.5;
-  thePlayer.spawnPositionY = cellSize*1.5;
+  thePlayer.spawnPositionX = width/2;
+  thePlayer.spawnPositionY = height/2;
   thePlayer.x = thePlayer.spawnPositionX;
   thePlayer.y = thePlayer.spawnPositionY;
   
@@ -134,21 +145,6 @@ function movePlayer() {
     thePlayer.x += thePlayer.speed;
   }
   
-  //Check for collision with the window
-  if (thePlayer.x + cellSize/2 > width){
-    thePlayer.x = width - cellSize/2;
-  }
-  if (thePlayer.x - cellSize/2 < 0){
-    thePlayer.x = cellSize/2;
-  }
-  if (thePlayer.y - cellSize/2 < 0){
-    thePlayer.y = cellSize/2;
-  }
-  if (thePlayer.y + cellSize/2 > height){
-    thePlayer.y = height - cellSize/2;
-  }
-  
-  
   playerGridCollision(playerGridX, playerGridY, playerUpperGridY, playerLowerGridY,  playerLeftGridX, playerRightGridY);
   inputsForGame();
 }
@@ -200,7 +196,14 @@ function displayPlayer(){
     image(downPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
   }
   if (PacManMoveState === 4){
-    image(rightPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
+    if (millis()){
+      image(rightPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
+    }
+    image(rightPacManSprite1, thePlayer.x, thePlayer.y, cellSize, cellSize);
+    image(rightPacManSprite2, thePlayer.x, thePlayer.y, cellSize, cellSize);
+    image(rightPacManSprite3, thePlayer.x, thePlayer.y, cellSize, cellSize);
+    image(rightPacManSprite4, thePlayer.x, thePlayer.y, cellSize, cellSize);
+    image(rightPacManSprite5, thePlayer.x, thePlayer.y, cellSize, cellSize);
   }
 }
 
@@ -208,6 +211,7 @@ function displayPlayer(){
 function generateRandomGrid(cols, rows) {
   const grid = Array.from({length:rows}, () => Array(cols).fill(IMPASSIBLE));
 
+  //carves the path
   function carvePath(x,y){
     const directions = [
       {dx: 0, dy: -1},//up
@@ -215,6 +219,9 @@ function generateRandomGrid(cols, rows) {
       {dx: 1, dy: 0},//right
       {dx: -1, dy: 0},//left
     ];
+    //change the random number to change how often lines will be made
+    //lower the value for more vertical lines
+    //increase the value for more horizontal lines
     directions.sort(() => Math.random() - 0.5);
 
     directions.forEach(({dx,dy}) => {
@@ -227,7 +234,6 @@ function generateRandomGrid(cols, rows) {
       }
     });
   }
-
   grid[1][1] = OPEN_TILE;
   carvePath(1,1);
 
@@ -237,8 +243,8 @@ function generateRandomGrid(cols, rows) {
 //Displays the grid
 function displayGrid() {
   //Checks each tile
-  for (let y = 0; y < GRID_SIZE; y++) {
-    for (let x = 0; x < GRID_SIZE; x++) {
+  for (let y = 0; y < MAZE_SIZE; y++) {
+    for (let x = 0; x < MAZE_SIZE; x++) {
 
       //Checks the tile and gives it colour appropiate to its state
       if (mazeGrid[y][x] === OPEN_TILE) {

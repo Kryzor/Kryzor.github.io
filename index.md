@@ -14,6 +14,7 @@
 - [Grid Demo](grid_demo)
 - [Game of Life Demo](game_of_life_demo)
 - [Rectangle Grid Demo](rectangle_grid)
+- [Walker OOP Demo](walker_oop_demo)
 ## Projects
 - [Interactive scene](interactive_scene)
 - [Arrays and Object Notation](arrays_and_object_notaton)
