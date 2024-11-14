@@ -6,10 +6,10 @@
 let mazeGrid;
 let cellSize;
 
-const MAZE_SIZE = 50;
+const MAZE_SIZE = 20;
 
-//visual grid size for the amount of blocks  will be seen on screen vertically
-const GRID_SIZE = 30;
+//visual grid size for the amount of blocks will be seen on screen
+const GRID_SIZE = 20;
 
 //grid states
 const OPEN_TILE = 0;
@@ -22,22 +22,29 @@ let thePlayer = {
   speed: 0,
   spawnPositionX: 0,
   spawnPositionY: 0,
+  spawnBox: 0,
 };
 
 //the state for the players movement
 let PacManMoveState = 0;
 
+let spriteState = 0;
 let lastSpriteTime;
 const SPRITE_ANIMATION_DURATION = 200;
+
 let defaultPacManSprite;
+
 let rightPacManSprite;
 let rightPacManSprite1;
 let rightPacManSprite2;
 let rightPacManSprite3;
 let rightPacManSprite4;
 let rightPacManSprite5;
+
 let downPacManSprite;
+
 let leftPacManSprite;
+
 let upPacManSprite;
 
 //the state for the screen
@@ -46,14 +53,18 @@ let screenState = 1;
 //loads the sprites
 function preload(){
   defaultPacManSprite = loadImage("images/pacman/pacman-default.png"); 
+
   rightPacManSprite = loadImage("images/pacman/pacman-right0.png"); 
   rightPacManSprite1 = loadImage("images/pacman/pacman-right1.png"); 
-  rightPacManSprite2 = loadImage("images/pacman/pacman-right2.png"); 
+  rightPacManSprite2 = loadImage("images/pacman/pacman-right2.png");
   rightPacManSprite3 = loadImage("images/pacman/pacman-right3.png"); 
-  rightPacManSprite4 = loadImage("images/pacman/pacman-right4.png"); 
+  rightPacManSprite4 = loadImage("images/pacman/pacman-right4.png");
   rightPacManSprite5 = loadImage("images/pacman/pacman-right5.png"); 
-  downPacManSprite = loadImage("images/pacman/pacman-down0.png"); 
+  
+  downPacManSprite = loadImage("images/pacman/pacman-down0.png");
+  
   leftPacManSprite = loadImage("images/pacman/pacman-left0.png"); 
+  
   upPacManSprite = loadImage("images/pacman/pacman-up0.png"); 
 }
 
@@ -61,27 +72,24 @@ function setup() {
   frameRate(60);
   //creates the screen
   createCanvas(windowWidth, windowHeight);
-
-  //makes cellSize scale to the height of the screen and fit GRID_SIZE with the screen
+  
+  //makes cellSize scale to the height of the screen
   cellSize = height/GRID_SIZE;
-
+  
+  //creates the spawn position for pac man
+  thePlayer.spawnBox = Math.round(MAZE_SIZE/2);
+  thePlayer.x = cellSize/2;
+  thePlayer.y = cellSize/2;
   mazeGrid = generateRandomGrid(MAZE_SIZE, MAZE_SIZE);
   imageMode(CENTER);
   noSmooth();
   noStroke();
   background(0);
-  
-  
+    
   //makes the speed go the same speed for the size of the grid, if it was a static number
   //it would go super fast on a smaller grid
   thePlayer.speed = cellSize*0.1;
-  
-  //creates the spawn position for pac man
-  thePlayer.spawnPositionX = width/2;
-  thePlayer.spawnPositionY = height/2;
-  thePlayer.x = thePlayer.spawnPositionX;
-  thePlayer.y = thePlayer.spawnPositionY;
-  
+
 }
 
 //Detect when the window is resized to update certain stuff so it wont look bugged
@@ -94,7 +102,7 @@ function draw() {
   screenController();
 }
 
-//Controls which screen is allowed tobe visible
+//Controls which screen is allowed to be visible
 function screenController(){
   if (screenState === 1){
     displayGameScreen();
@@ -196,14 +204,7 @@ function displayPlayer(){
     image(downPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
   }
   if (PacManMoveState === 4){
-    if (millis()){
-      image(rightPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
-    }
-    image(rightPacManSprite1, thePlayer.x, thePlayer.y, cellSize, cellSize);
-    image(rightPacManSprite2, thePlayer.x, thePlayer.y, cellSize, cellSize);
-    image(rightPacManSprite3, thePlayer.x, thePlayer.y, cellSize, cellSize);
-    image(rightPacManSprite4, thePlayer.x, thePlayer.y, cellSize, cellSize);
-    image(rightPacManSprite5, thePlayer.x, thePlayer.y, cellSize, cellSize);
+    image(rightPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
   }
 }
 
@@ -219,8 +220,9 @@ function generateRandomGrid(cols, rows) {
       {dx: 1, dy: 0},//right
       {dx: -1, dy: 0},//left
     ];
+
     //change the random number to change how often lines will be made
-    //lower the value for more vertical lines
+    //decrease the value for more vertical lines
     //increase the value for more horizontal lines
     directions.sort(() => Math.random() - 0.5);
 
@@ -234,7 +236,13 @@ function generateRandomGrid(cols, rows) {
       }
     });
   }
-  grid[1][1] = OPEN_TILE;
+
+  grid[thePlayer.spawnBox][thePlayer.spawnBox] = OPEN_TILE;
+  grid[thePlayer.spawnBox+1][thePlayer.spawnBox] = OPEN_TILE;
+  grid[thePlayer.spawnBox][thePlayer.spawnBox+1] = OPEN_TILE;
+  grid[thePlayer.spawnBox+1][thePlayer.spawnBox+1] = OPEN_TILE;
+  grid[thePlayer.spawnBox][thePlayer.spawnBox-1] = OPEN_TILE;
+  grid[thePlayer.spawnBox+1][thePlayer.spawnBox-1] = OPEN_TILE;
   carvePath(1,1);
 
   return grid;
