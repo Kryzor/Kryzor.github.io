@@ -1,15 +1,20 @@
 // Grid Based Game
-// Endless pac-man kind of thing
+// This was supposed to be an endlessly generating pac man game
+// but i took too long to get some parts finished
 // Katos Booth
 // October 28th 2024
+// Extra for experts: the generation for the maze took some time but i got it working
+// the generation can be infinite but it will be very laggy
+// thats why i limited the size. I will continue this for my major project though
+//
 
 let mazeGrid;
 let cellSize;
 
-const MAZE_SIZE = 20;
+const MAZE_SIZE = 100;
 
 //visual grid size for the amount of blocks will be seen on screen
-const GRID_SIZE = 20;
+let gridSize = 20;
 
 //grid states
 const OPEN_TILE = 0;
@@ -74,22 +79,17 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
   
   //makes cellSize scale to the height of the screen
-  cellSize = height/GRID_SIZE;
+  cellSize = height/gridSize;
   
   //creates the spawn position for pac man
-  thePlayer.spawnBox = Math.round(MAZE_SIZE/2);
-  thePlayer.x = cellSize/2;
-  thePlayer.y = cellSize/2;
+  thePlayer.spawnBox = Math.round(gridSize/2);
+  thePlayer.x = thePlayer.spawnBox * cellSize+cellSize/2;
+  thePlayer.y = thePlayer.spawnBox * cellSize+cellSize/2;
+
   mazeGrid = generateRandomGrid(MAZE_SIZE, MAZE_SIZE);
   imageMode(CENTER);
   noSmooth();
-  noStroke();
   background(0);
-    
-  //makes the speed go the same speed for the size of the grid, if it was a static number
-  //it would go super fast on a smaller grid
-  thePlayer.speed = cellSize*0.1;
-
 }
 
 //Detect when the window is resized to update certain stuff so it wont look bugged
@@ -99,6 +99,11 @@ function windowResized(){
 }
 
 function draw() {
+  cellSize = height/gridSize;
+  //makes the speed go the same speed for the size of the grid, if it was a static number
+  //it would go super fast on a screen fitting a large amount of squares
+  //or super slow on a screen fitting a little amount of squares
+  thePlayer.speed = cellSize*0.1;
   screenController();
 }
 
@@ -114,6 +119,7 @@ function screenController(){
 
 //Displays the game screen
 function displayGameScreen(){
+  background(0);
   displayGrid();
   createPlayer();
 }
@@ -175,21 +181,27 @@ function playerGridCollision(gridX, gridY, upperGridY, lowerGridY, leftGridX, ri
 
 //Get the inputs for the game
 function inputsForGame(){
-  if (keyIsDown(38) === true){ //up
+  if (keyIsDown(38) === true || keyIsDown(87) === true){ //up
     PacManMoveState = 1;
   }
-  if (keyIsDown(37) === true){ //left
+  if (keyIsDown(37) === true || keyIsDown(65) === true){ //left
     PacManMoveState = 2;
   }
-  if (keyIsDown(40) === true){ //down
+  if (keyIsDown(40) === true || keyIsDown(83) === true){ //down
     PacManMoveState = 3;
   }
-  if (keyIsDown(39) === true){ //left
+  if (keyIsDown(39) === true || keyIsDown(68) === true){ //right
     PacManMoveState = 4;
+  }
+  if (keyIsDown(189) === true){ // plus
+    gridSize += 0.1;
+  }
+  if (keyIsDown(187) === true){ // minus
+    gridSize -= 0.1;
   }
 }
 
-//Display the player
+//Displays the player
 function displayPlayer(){
   if (PacManMoveState === 0){
     image(defaultPacManSprite, thePlayer.x, thePlayer.y, cellSize, cellSize);
@@ -237,12 +249,18 @@ function generateRandomGrid(cols, rows) {
     });
   }
 
-  grid[thePlayer.spawnBox][thePlayer.spawnBox] = OPEN_TILE;
-  grid[thePlayer.spawnBox+1][thePlayer.spawnBox] = OPEN_TILE;
-  grid[thePlayer.spawnBox][thePlayer.spawnBox+1] = OPEN_TILE;
-  grid[thePlayer.spawnBox+1][thePlayer.spawnBox+1] = OPEN_TILE;
-  grid[thePlayer.spawnBox][thePlayer.spawnBox-1] = OPEN_TILE;
-  grid[thePlayer.spawnBox+1][thePlayer.spawnBox-1] = OPEN_TILE;
+  //sets the 9 middle boxes to an open tile for spawn point
+  grid[thePlayer.spawnBox-2][thePlayer.spawnBox] = OPEN_TILE; //higher top middle
+  grid[thePlayer.spawnBox-1][thePlayer.spawnBox-1] = OPEN_TILE; //top left
+  grid[thePlayer.spawnBox-1][thePlayer.spawnBox] = OPEN_TILE; //top middle
+  grid[thePlayer.spawnBox-1][thePlayer.spawnBox+1] = OPEN_TILE; //top right
+  grid[thePlayer.spawnBox][thePlayer.spawnBox-1] = OPEN_TILE; //left middle
+  grid[thePlayer.spawnBox][thePlayer.spawnBox] = OPEN_TILE; //center
+  grid[thePlayer.spawnBox][thePlayer.spawnBox+1] = OPEN_TILE; //right middle
+  grid[thePlayer.spawnBox+1][thePlayer.spawnBox-1] = OPEN_TILE; //bottom left
+  grid[thePlayer.spawnBox+1][thePlayer.spawnBox] = OPEN_TILE; //bottom middle
+  grid[thePlayer.spawnBox+1][thePlayer.spawnBox+1] = OPEN_TILE; //bottom right
+
   carvePath(1,1);
 
   return grid;
@@ -251,16 +269,18 @@ function generateRandomGrid(cols, rows) {
 //Displays the grid
 function displayGrid() {
   //Checks each tile
-  for (let y = 0; y < MAZE_SIZE; y++) {
-    for (let x = 0; x < MAZE_SIZE; x++) {
+  for (let y = 0; y < gridSize; y++) {
+    for (let x = 0; x < gridSize; x++) {
 
-      //Checks the tile and gives it colour appropiate to its state
+      //gives the squares colour appropiate to its state
       if (mazeGrid[y][x] === OPEN_TILE) {
-        fill(0);
+        fill("black");
+        noStroke();
         square(x * cellSize, y * cellSize, cellSize);
       }
       else if (mazeGrid[y][x] === IMPASSIBLE) {
-        fill(0, 0, 255);
+        fill("blue");
+        stroke("blue");
         square(x * cellSize, y * cellSize, cellSize);
       }
     }
