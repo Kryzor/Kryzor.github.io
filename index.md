@@ -16,6 +16,7 @@
 - [Rectangle Grid Demo](rectangle_grid)
 - [Walker OOP Demo](walker_oop_demo)
 - [Fireworks OOP Demo](fireworks_oop_demo)
+- [Connected Nodes OOP Demo](connected_nodes_demo)
 ## Projects
 - [Interactive scene](interactive_scene)
 - [Arrays and Object Notation](arrays_and_object_notaton)
