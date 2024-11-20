@@ -9,16 +9,22 @@ function setup() {
 }
 
 function draw() {
-  background(255);
+  background(0);
   for (let point of points){
-    point.move();
+    point.update();
+    point.connectTo(points);
+    point.display();
+  }
+  for (let point of points){
     point.display();
   }
 }
 
 function mousePressed(){
-  let somePoint = new MovingPoint(mouseX, mouseY);
-  points.push(somePoint);
+  for (let i = 0; i < 20; i++){
+    let somePoint = new MovingPoint(mouseX, mouseY);
+    points.push(somePoint);
+  }
 }
 
 class MovingPoint {
@@ -27,16 +33,48 @@ class MovingPoint {
     this.y = y;
     this.speed = 5;
     this.radius = 15;
-    this.color = color (random(255), random(255), random(255));
+    this.color = color (0, 255, 0);
     this.xTime = random(1000);
     this.yTime = random(1000);
     this.deltaTime = 0.01;
+    this.reach = 256;
+    this.minRadius = 15;
+    this.maxRadius = 50;
   }
 
   display(){
     noStroke();
     fill(this.color);
     circle(this.x, this.y, this.radius*2);
+  }
+
+  update(){
+    this.move();
+    this.wrapAroundScreen();
+    this.adjustSizeWithMouse();
+  }
+
+  connectTo(pointsArray){
+    for (let otherPoint of pointsArray){
+      if (this !== otherPoint){
+        let pointDistance = dist(this.x, this.y, otherPoint.x, otherPoint.y);
+        if (pointDistance < this.reach){
+          stroke(this.color);
+          line(this.x, this.y, otherPoint.x, otherPoint.y);
+        }
+      }
+    }
+  }
+
+  adjustSizeWithMouse(){
+    let mouseDistance = dist(this.x, this.y, mouseX, mouseY);
+    if (mouseDistance < this.reach){
+      let theSize = map(mouseDistance, 0 , this.reach, this.maxRadius, this.minRadius);
+      this.radius = theSize;
+    }
+    else {
+      this.radius = this.minRadius;
+    }
   }
 
   move(){
@@ -54,5 +92,24 @@ class MovingPoint {
 
     this.xTime += this.deltaTime;
     this.yTime += this.deltaTime;
+  }
+
+  wrapAroundScreen(){
+    if (this.x < 0) {
+      //fell of left side
+      this.x += width;
+    }
+    if (this.x > width) {
+      //fell of right side
+      this.x -= width;
+    }
+    if (this.y < 0) {
+      //fell off the top
+      this.y += height;
+    }
+    if (this.y > height) {
+      //fell off bottom
+      this.y -= height;
+    }
   }
 }
