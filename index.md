@@ -20,6 +20,7 @@
 - [Local storage Demo](local_storage_demo)
 - [OOP Inheritance Demo](inheritance_demo)
 - [Fractal Circles Demo](fractal_circles_demo)
+- [Sierpinski Triangle Demo](sierpinski_triangle_demo)
 ## Projects
 - [Interactive scene](interactive_scene)
 - [Arrays and Object Notation](arrays_and_object_notaton)
