@@ -18,6 +18,8 @@
 - [Fireworks OOP Demo](fireworks_oop_demo)
 - [Connected Nodes OOP Demo](connected_nodes_demo)
 - [Local storage Demo](local_storage_demo)
+- [OOP Inheritance Demo](inheritance_demo)
+- [Fractal Circles Demo](fractal_circles_demo)
 ## Projects
 - [Interactive scene](interactive_scene)
 - [Arrays and Object Notation](arrays_and_object_notaton)
